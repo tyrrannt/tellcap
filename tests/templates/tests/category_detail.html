@@ -1,0 +1,31 @@
+{% extends 'tests/base.html' %}
+{% load static %}
+
+{% block title %}<title>{{ title }}</title>{% endblock %}
+
+{% block content %}
+    <!-- Blog Section Start -->
+    <div class="section section-padding">
+        <div class="container">
+
+            <div class="card">
+                <div class="card-header">Наименование: {{ object.name }}</div>
+                <div class="card-body">
+                    <h5 class="card-title">Описание</h5>
+                    <p class="card-text">{{ object.description }}</p>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                               value={{ object.is_active }} id="flexCheckDefault">
+                        <label class="form-check-label" for="flexCheckDefault">
+                            Активность
+                        </label>
+                    </div>
+                    <a href="{% url 'tests:edit_category' object.pk %}" class="btn btn-primary">Редактировать</a>
+                    <a href="{% url 'tests:delete_category' object.pk %}" class="btn btn-primary">Удалить</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Blog Section End -->
+{% endblock %}

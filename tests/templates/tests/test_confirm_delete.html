@@ -1,0 +1,18 @@
+{% extends 'tests/base.html' %}
+{% load static %}
+
+{% block title %}<title>{{ title }}</title>{% endblock %}
+
+{% block content %}
+    <!-- Blog Section Start -->
+    <div class="section section-padding">
+        <div class="container">
+            <form action="" method="post">
+                {% csrf_token %}
+                <p>Вы уверены, что хотите удалить "{{ object.name }}"?</p>
+                <input type="submit" value="Подтверждаю"/>
+            </form>
+        </div>
+    </div>
+    <!-- Blog Section End -->
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'tests/base.html' %}
+{% load static %}
+
+{% block title %}<title>{{ title }}</title>{% endblock %}
+
+{% block content %}
+    <!-- Blog Section Start -->
+    <div class="section section-padding">
+        <div class="container">
+            <div class="row col-sm-12">
+                <table class="table table-hover table-responsive">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Категория</th>
+                        <th scope="col">Наименование</th>
+                        <th scope="col">Активен</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in object_list %}
+                        <tr>
+                            <th scope="row"><a href="{% url 'tests:view_test' item.pk %}">{{ item.pk }}</a></th>
+                            <td><a href="{% url 'tests:view_test' item.pk %}">{{ item.category }}</a></td>
+                            <td><a href="{% url 'tests:view_test' item.pk %}">{{ item.name }}</a></td>
+                            <td><a href="{% url 'tests:view_test' item.pk %}">{{ item.is_active }}</a></td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <th scope="row">0</th>
+                            <td>Empty</td>
+                            <td>Empty</td>
+                            <td>Empty</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <!-- Single Blog End -->
+            </div>
+            <div class="row col-sm-12">
+                <a class="btn btn-primary" href="{% url 'tests:add_test' %}" role="button">Добавить файл</a>
+            </div>
+            <div class="row col-sm-12">
+                <!-- Pagination Start -->
+                <div class="col" data-aos="fade-up" data-aos-delay="300">
+                    <ul class="pagination-cr mt-8 pt-8 border-top">
+                        {% if page_obj.has_previous %}
+                            <li><a href="?page={{ page_obj.previous_page_number }}"><i
+                                    class="fa fa-angle-double-left"></i> Prev</a></li>
+                        {% else %}
+                            <li><i class="fa fa-angle-double-left"></i> Prev</li>
+                        {% endif %}
+
+                        {% for page in page_obj.paginator.page_range %}
+                            {% if page == page_obj.number %}
+                                <li class="active"><a href="?page={{ page }}">0{{ page }}</a></li>
+                            {% elif page > page_obj.number|add:-3 and page < page_obj.number|add:3 %}
+                                <li><a href="?page={{ page }}">0{{ page }}</a></li>
+                            {% endif %}
+
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li><a href="?page={{ page_obj.next_page_number }}">Next <i
+                                    class="fa fa-angle-double-right"></i></a></li>
+                        {% else %}
+                            <li>Next <i class="fa fa-angle-double-right"></i></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <!-- Pagination End -->
+            </div>
+        </div>
+    </div>
+    <!-- Blog Section End -->
+{% endblock %}

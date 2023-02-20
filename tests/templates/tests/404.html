@@ -1,0 +1,22 @@
+{% extends 'tests/base.html' %}
+{% load static %}
+
+{% block title %}<title>Страница не найдена</title>{% endblock %}
+{% block css %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+
+{% block content %}
+    <div class="section section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="error-area text-center" data-aos="fade-up" data-aos-delay="300">
+{#                    <img src="assets/images/bg/404.png" alt="Error 404">#}
+                    <h2 class="title">Страница не найдена!</h2>
+                    <p class="short-desc m-0">Запрошенный материал не найден на сервере.</p>
+                    <div class="error-btn_wrap">
+                        <a class="btn btn-hover-secondary btn-primary" href="{% url 'tests:main' %}"> <i class="fa fa-arrow-right mr-1"></i> Вернуться на главную</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

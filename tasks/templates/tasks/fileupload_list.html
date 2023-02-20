@@ -1,0 +1,83 @@
+{% extends 'tests/base.html' %}
+{% load static %}
+
+{% block title %}<title>{{ title }}</title>{% endblock %}
+
+{% block content %}
+    <!-- Blog Section Start -->
+    <div class="section section-padding">
+
+        <div class="container">
+            <div>
+                {% if user.is_superuser %}
+                    <div class="row col-sm-12">
+                        <a class="btn btn-primary" href="{% url 'tasks:file_add' %}" role="button">Добавить файл</a>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="row col-sm-12">
+                <table class="table table-hover table-responsive">
+                    <thead>
+                    <tr>
+                        <th width="5%">#</th>
+                        <th width="22%">Название</th>
+                        <th width="65%">Содержание</th>
+                        <th width="8%"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in object_list %}
+                        <tr>
+                            <th scope="row"><a href="#">{{ item.pk }}</a></th>
+                            <td><a href="">{{ item.file_field }}</a></td>
+                            <td>
+                                <audio controls="controls" crossorigin="anonymous" style="width:100%;" controlsList="nodownload"><source src="/media/{{item.file_field.name}}" type="audio/mpeg"></audio>
+                            </td>
+                            <td><a href="{% url 'tasks:file_delete' item.pk %}" class="btn-primary btn">Delete</a> </td>
+
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <th scope="row">0</th>
+                            <td>Empty</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <!-- Single Blog End -->
+            </div>
+
+            <div class="row col-sm-12">
+                <!-- Pagination Start -->
+                <div class="col" data-aos="fade-up" data-aos-delay="300">
+                    <ul class="pagination-cr mt-8 pt-8 border-top">
+                        {% if page_obj.has_previous %}
+                            <li><a href="?page={{ page_obj.previous_page_number }}"><i
+                                    class="fa fa-angle-double-left"></i> Prev</a></li>
+                        {% else %}
+                            <li><i class="fa fa-angle-double-left"></i> Prev</li>
+                        {% endif %}
+
+                        {% for page in page_obj.paginator.page_range %}
+                            {% if page == page_obj.number %}
+                                <li class="active"><a href="?page={{ page }}">0{{ page }}</a></li>
+                            {% elif page > page_obj.number|add:-3 and page < page_obj.number|add:3 %}
+                                <li><a href="?page={{ page }}">0{{ page }}</a></li>
+                            {% endif %}
+
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li><a href="?page={{ page_obj.next_page_number }}">Next <i
+                                    class="fa fa-angle-double-right"></i></a></li>
+                        {% else %}
+                            <li>Next <i class="fa fa-angle-double-right"></i></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <!-- Pagination End -->
+            </div>
+        </div>
+    </div>
+    <!-- Blog Section End -->
+{% endblock %}

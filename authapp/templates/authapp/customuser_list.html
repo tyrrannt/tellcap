@@ -1,0 +1,61 @@
+{% extends 'tests/base.html' %}
+{% load static %}
+
+{% block title %}<title>{{ title }}</title>{% endblock %}
+
+{% block content %}
+    <!-- Blog Section Start -->
+    <div class="section section-padding">
+        <div class="container">
+            <div class="row mb-n8 row-cols-sm-2 row-cols-lg-3 row-cols-1">
+                <div class="table-responsive-md">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Логин</th>
+                        <th scope="col">Фамилия</th>
+                        <th scope="col">Имя</th>
+                        <th scope="col">Администратор</th>
+                        <th scope="col">Дата рождения</th>
+                        <th scope="col">Активность</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Последний вход</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in object_list %}
+                        <tr>
+                            <th scope="row">{{ item.pk }}</th>
+                            <td>{{ item.username }}</td>
+                            <td>{{ item.last_name }}</td>
+                            <td>{{ item.first_name }}</td>
+                            <td>{{ item.is_superuser }}</td>
+                            <td>{{ item.birthday }}</td>
+                            <td>{{ item.is_active }}</td>
+                            <td>{{ item.email }}</td>
+                            <td>{{ item.last_login }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <th scope="row">0</th>
+                            <td>Empty</td>
+                            <td>Empty</td>
+                            <td>Empty</td>
+                            <td>Empty</td>
+                            <td>Empty</td>
+                            <td>Empty</td>
+                            <td>Empty</td>
+                            <td>Empty</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+                <!-- Single Blog End -->
+            </div>
+
+        </div>
+    </div>
+    <!-- Blog Section End -->
+{% endblock %}

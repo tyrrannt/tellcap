@@ -1,0 +1,242 @@
+{% load static %}
+<!-- Header Section Start -->
+<div class="header section">
+
+    <!-- Header Top Start -->
+    <div class="header-top bg-secondary">
+        <div class="container">
+            <div class="row align-items-center">
+                <!-- Header Top Link/Search Start -->
+                <div class="col-lg-8 col-md-12">
+                    <ul class="header-top-links">
+                        <li><i class="fa fa-phone"></i><a href="tel:+74955891356"> +7 (495) 589-13-56</a></li>
+                        <li><i class="fa fa-envelope-o"></i><a href="mailto:info@complang.ru?subject=Вопрос по сайту">
+                            info@complang.ru</a></li>
+                        <li><i class="fa fa-clock-o"></i> <span>9.00-18.00 Пн-Пт</span></li>
+                    </ul>
+                </div>
+                <!-- Header Top Link/Search End -->
+                <!-- Header Top Action Bar Start -->
+                {#                <div class="col-lg-4 col-md-12 text-md-right">#}
+                {#                    <form class="header-top-action" action="#">#}
+                {#                        <input class="action-search" type="text" placeholder="Поиск">#}
+                {#                        <button class="action-btn" type="submit"><i class="fa fa-search"></i></button>#}
+                {#                    </form>#}
+                {#                </div>#}
+                <!-- Header Top Action Bar End -->
+            </div>
+        </div>
+    </div>
+    <!-- Header Top End -->
+
+    <!-- Header Bottom Start -->
+    <div class="header-bottom section header-sticky">
+        <div class="container">
+            <div class="row align-items-center">
+                <!-- Header Logo Start -->
+                <div class="col-lg-3 col-6">
+                    <div class="header-logo">
+                        <a href="{% url 'tests:main' %}"><img src="{% static 'tests/images/logo/logo.png' %}"
+                                                              width="30%" alt="Site Logo"/></a>
+                    </div>
+                </div>
+                <!-- Header Logo End -->
+
+                <!-- Header Menu Start -->
+                <div class="col-lg-9 col-6">
+                    <!-- Main Menu Start -->
+                    <div class="main-menu d-none d-lg-flex">
+                        {% if user.is_authenticated %}
+                            <ul>
+                                <li><a href="{% url 'tests:main' %}">Главная</a></li>
+                                {% if user.is_superuser %}
+                                    <li class="has-children">
+                                        <a href="#">Файлы</a>
+                                        <ul class="sub-menu">
+                                            {% for item in category %}
+                                                <li><a href="{% url 'tests:category' item.pk %}">{{ item }}</a></li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                    <li class="has-children">
+                                        <a href="#">Настройки</a>
+                                        <ul class="sub-menu">
+                                            <li><a href="{% url 'tests:list_category' %}">Категории</a></li>
+                                            <li><a href="{% url 'tests:list_tests' %}">Файлы</a></li>
+                                            <li><a href="{% url 'authapp:list_users' %}">Пользователи</a></li>
+                                        </ul>
+                                    </li>
+                                {% endif %}
+                                <li class="has-children">
+                                    <a href="#">Личный кабинет</a>
+                                    <ul class="sub-menu">
+
+                                        <li><a href="{% url 'auth:terms' %}">Политика</a></li>
+                                        {% if user.is_authenticated %}
+
+                                            <li><a href="{% url 'tests:task_reports' %}">Отчеты</a></li>
+                                            <li><a href="{% url 'auth:bugreport_list' %}">Сообщение об ошибке</a></li>
+                                            {% if user.is_superuser %}
+                                                <li><a href="{% url 'tasks:purpose_list' %}">Задачи</a></li>
+                                                <li><a href="{% url 'tasks:file_list' %}">Загрузить mp3</a></li>
+                                                <li><a href="{% url 'admin:index' %}">Админ панель</a></li>
+                                            {% endif %}
+                                            <li><a href="{% url 'auth:logout' %}">Выход</a></li>
+                                        {% else %}
+                                            <li><a href="{% url 'auth:login' %}">Авторизация</a></li>
+                                            <li><a href="{% url 'auth:register' %}">Регистрация</a></li>
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                            </ul>
+                        {% endif %}
+                    </div>
+                    <!-- Main Menu End -->
+
+                    <!-- Main Menu Riht Side Start -->
+                    <div class="main-menu-right-side d-flex d-lg-none">
+
+                        {#                        <!-- Header Search Start -->#}
+                        {#                        <div class="header-search mr-4">#}
+                        {#                            <a class="header-search-icon" href="#"><i class="fa fa-search"></i></a>#}
+                        {#                        </div>#}
+                        {#                        <!-- Header Search End -->#}
+
+                        <!-- Mobile Menu Bar Start -->
+                        <div class="mobile-menu-bar-wrapper">
+                            <a href="#" class="mobile-menu-bar"><i class="fa fa-bars"></i></a>
+                        </div>
+                        <!-- Mobile Menu Bar End -->
+
+                    </div>
+                    <!-- Main Menu Riht Side End -->
+
+                </div>
+                <!-- Header Menu End -->
+            </div>
+        </div>
+    </div>
+    <!-- Header Bottom End -->
+
+    <!-- Mobile Menu Start -->
+    <div class="mobile-menu-wrapper">
+        <div class="body-overlay"></div>
+        <!-- Mobile Menu Inner Start -->
+        <div class="mobile-menu-inner">
+
+            <!-- Button Close Start -->
+            <div class="btn-close-bar">
+                <i class="pe-7s-close"></i>
+            </div>
+            <!-- Button Close End -->
+
+            <!-- mobile menu start -->
+            <div class="mobile-navigation">
+                <nav>
+                    <ul class="mobile-menu">
+                        <li class="has-children">
+                            <a href="{% url 'tests:main' %}">Главная <i class="fa fa-angle-down"></i></a>
+                        </li>
+                        {% if user.is_authenticated %}
+                            {#                        <li class="has-children">#}
+                            {#                            <a href="#">Project <i class="fa fa-angle-down" aria-hidden="true"></i></a>#}
+                            {#                            <ul class="dropdown">#}
+                            {#                                <li><a href="#">Project 1</a></li>#}
+                            {#                                    <li><a href="#">Project 2</a></li>#}
+                            {#                                    <li><a href="#">Project 3</a></li>#}
+                            {#                            </ul>#}
+                            {#                        </li>#}
+                            <li class="has-children">
+                                <a href="#">Файлы <i class="fa fa-angle-down" aria-hidden="true"></i></a>
+                                <ul class="dropdown">
+                                    {% for item in category %}
+                                        <li><a href="{% url 'tests:category' item.pk %}">{{ item }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                            <li class="has-children">
+                                <a href="#">Настройки <i class="fa fa-angle-down" aria-hidden="true"></i></a>
+                                <ul class="dropdown">
+                                    <li><a href="{% url 'tests:list_category' %}">Категории</a></li>
+                                    <li><a href="{% url 'tests:list_tests' %}">Файлы</a></li>
+                                    <li><a href="{% url 'authapp:list_users' %}">Пользователи</a></li>
+                                </ul>
+                            </li>
+                        {% endif %}
+                        <li class="has-children">
+                            <a href="#">Личный кабинет <i class="fa fa-angle-down" aria-hidden="true"></i></a>
+                            <ul class="dropdown">
+                                <li><a href="{% url 'auth:terms' %}">Политика</a></li>
+                                {% if user.is_authenticated %}
+
+                                    <li><a href="{% url 'tests:task_reports' %}">Отчеты</a></li>
+                                    <li><a href="{% url 'auth:bugreport_list' %}">Сообщение об ошибке</a></li>
+                                    {% if user.is_superuser %}
+                                        <li><a href="{% url 'tasks:purpose_list' %}">Задачи</a></li>
+                                        <li><a href="{% url 'tasks:file_list' %}">Загрузить mp3</a></li>
+                                        <li><a href="{% url 'admin:index' %}">Админ панель</a></li>
+                                    {% endif %}
+                                    <li><a href="{% url 'auth:logout' %}">Выход</a></li>
+                                {% else %}
+                                    <li><a href="{% url 'auth:login' %}">Авторизация</a></li>
+                                    <li><a href="{% url 'auth:register' %}">Регистрация</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <!-- mobile menu end -->
+
+            <!-- Contact Links/Social Links Start -->
+            <div class="mt-auto">
+                <!-- Contact Link Start -->
+                <ul class="contact-links">
+                    <li><i class="fa fa-phone"></i><a href="tel:+74955891356"> +7 (495) 589-13-56</a></li>
+                    <li><i class="fa fa-envelope-o"></i><a href="mailto:info@complang.ru?subject=Вопрос по сайту">
+                        info@complang.ru</a></li>
+                    <li><i class="fa fa-clock-o"></i> <span>9.00-18.00 Пн-Пт</span></li>
+                </ul>
+                <!-- Contact Link End -->
+                {##}
+                {#                <!-- Social Widget Start -->#}
+                {#                <div class="widget-social">#}
+                {#                    <a title="Facebook" href="#"><i class="fa fa-facebook-f"></i></a>#}
+                {#                    <a title="Twitter" href="#"><i class="fa fa-twitter"></i></a>#}
+                {#                    <a title="Linkedin" href="#"><i class="fa fa-linkedin"></i></a>#}
+                {#                    <a title="Youtube" href="#"><i class="fa fa-youtube"></i></a>#}
+                {#                    <a title="Vimeo" href="#"><i class="fa fa-vimeo"></i></a>#}
+                {#                </div>#}
+                {#                <!-- Social Widget End -->#}
+            </div>
+            <!-- Contact Links/Social Links End -->
+
+        </div>
+        <!-- Mobile Menu Inner End -->
+    </div>
+    <!-- Mobile Menu End -->
+
+    {#    <!-- Offcanvas Search Start -->#}
+    {#    <div class="offcanvas-search">#}
+    {#        <!-- Offcanvas Search Inner Start -->#}
+    {#        <div class="offcanvas-search-inner">#}
+    {#            <!-- Button Close Start -->#}
+    {#            <div class="btn-close-bar">#}
+    {#                <i class="pe-7s-close"></i>#}
+    {#            </div>#}
+    {#            <!-- Button Close End -->#}
+    {##}
+    {#            <!-- Offcanvas Search Form Start -->#}
+    {#            <form class="offcanvas-search-form" action="#">#}
+    {#                <input type="text" placeholder="Search Products...">#}
+    {#            </form>#}
+    {#            <!-- Offcanvas Search Form End -->#}
+    {##}
+    {#        </div>#}
+    {#        <!-- Offcanvas Search Inner End -->#}
+    {##}
+    {#    </div>#}
+    {#    <!-- Offcanvas Search End -->#}
+
+</div>
+<!-- Header Section End -->

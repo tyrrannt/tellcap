@@ -1,0 +1,238 @@
+{% extends 'tests/base.html' %}
+{% load static %}
+
+{% block title %}<title>{{ title }}</title>{% endblock %}
+
+{% block content %}
+    <!-- Blog Section Start -->
+    <div class="section section-padding">
+        <div class="container">
+            <div>
+                {% if form.errors %}
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ field.label }}</strong>: {{ error|escape }}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ field.label }}</strong>: {{ error|escape }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="row">
+                <form action="" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <hr>
+                    <div>
+                        <div class="row action-buttons">
+                            <div class="col-12 col-md-auto">
+                                <button type="submit"
+                                        class="submit-button btn btn-primary btn-px-4 py-3 d-flex align-items-center font-weight-semibold line-height-1"
+                                        data-loading-text="Loading...">
+                                    <i class="bx bx-save text-4 me-2"></i> Сохранить
+                                </button>
+                            </div>
+                            <div class="col-12 col-md-auto px-md-0 mt-3 mt-md-0">
+                                <a href="{% url 'tests:task_reports' %}"
+                                   class="cancel-button btn btn-light btn-px-4 py-3 border font-weight-semibold text-color-dark text-3">Закрыть</a>
+                            </div>
+                            <div class="col-12 col-md-auto ms-md-auto mt-3 mt-md-0 ms-auto"
+                                    {% if user.superintendent %} {% else %} hidden {% endif %}>
+                                <a href="#"
+                                   class="delete-button btn btn-danger btn-px-4 py-3 d-flex align-items-center font-weight-semibold line-height-1">
+                                    <i class="bx bx-trash text-4 me-2"></i> Удалить
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-row">
+                        <div class="form-group col mb-3">
+                            <div class="row">
+                                <div class="col-md-6 text-black-50"
+                                        {% if user.superintendent or user == object.examiner %} {% else %}
+                                     hidden {% endif %}>
+                                    <label for="id_test_module">Задача:</label>
+                                    <input type="text" disabled
+                                         class="form-control form-control-modern"
+                                         name="test_module"
+                                         value="{{ test_module }}"
+                                         id="id_test_module"/>
+                                </div>
+                                <div class="col-md-6 text-black-50"
+                                        {% if user.superintendent or user == object.examiner %} {% else %}
+                                     hidden {% endif %}>
+                                    <label for="id_student_uuid">УИН тестируемого</label>
+                                    <input type="text" disabled
+                                           class="form-control form-control-modern"
+                                           value="{{ object.student_uuid }}"/>
+                                    <input type="text" hidden
+                                           class="form-control form-control-modern"
+                                           name="student_uuid"
+                                           value="{{ object.student_uuid }}"
+                                           id="id_student_uuid"/>
+                                </div>
+                                <div class="col-md-12 text-black-50" style="padding-top: 10px">
+                                    <label for="id_exam_record">Аудиозапись экзамена:</label>
+                                    {% autoescape off %}
+                                        <audio controls="controls" crossorigin="anonymous" style="width:100%;"
+                                               {% if user.superintendent %}{% else %}controlsList="nodownload"{% endif %}>
+                                            <source src="
+                                                    {% if object.exam_record %}{{ object.exam_record.url }}{% endif %}"
+                                                    type="audio/mpeg">
+                                        </audio>
+                                    {% endautoescape %}
+                                    <input type="file" name="exam_record" class="form-control mb-4"
+                                           id="id_exam_record"
+                                           value="{% if object.exam_record %}{{ object.exam_record.url }}{% endif %}"
+                                           accept="audio/*"
+                                            {% if user.superintendent or user == object.examiner %} {% else %}
+                                           hidden {% endif %}>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div {% if user.superintendent or user == object.examiner %} {% else %} hidden {% endif %}>
+                        <hr>
+                        <div class="form-row">
+                            <div class="form-group col mb-3">
+                                <div class="row">
+                                    <div class="col-md-1 text-black-50" {% if object.ers %}{% else %}hidden{% endif %}>
+                                        <a href="{% if object.ers %}{{ object.ers.url }}{% endif %}">
+                                            <img src="{% static 'assets/images/excel.png' %}" height="50"
+                                                 alt="Файл"></a>
+                                    </div>
+                                    <div class="col-md-3 text" {% if user.superintendent %} {% else %}
+                                         hidden {% endif %}>
+                                        <label for="id_examiner">Экзаменатор:</label>
+                                        {{ form.examiner }}
+                                    </div>
+                                    <div class="col-md-2 date" {% if user.superintendent %} {% else %}
+                                         hidden {% endif %}>
+                                        <label for="id_ers_time_start">Начало оценки</label>
+                                        <input type="date"
+                                               class="form-control form-control-modern"
+                                               name="ers_time_start"
+                                               value="{{ object.ers_time_start | date:'Y-m-d' }}"
+                                               id="id_ers_time_start"/>
+                                    </div>
+                                    <div class="col-md-2 date" {% if user.superintendent %} {% else %}
+                                         hidden {% endif %}>
+                                        <label for="id_ers_time_end">Окончание оценки</label>
+                                        <input type="date"
+                                               class="form-control form-control-modern"
+                                               name="ers_time_end"
+                                               value="{{ object.ers_time_end | date:'Y-m-d' }}"
+                                               id="id_ers_time_end"/>
+                                    </div>
+                                    <div class="col-md-2 text-black-50" {% if exp_examiner %} hidden {% endif %}>
+                                        <label for="id_ers">Файл оценки экзаменатора:</label>
+                                        <input type="file" name="ers" class="form-control mb-4"
+                                               id="id_ers" accept=".xlsx,.xls">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div {% if user.superintendent or user == object.first_reiter %} {% else %} hidden {% endif %}>
+                        <hr>
+                        <div class="form-row">
+                            <div class="form-group col mb-3">
+                                <div class="row">
+                                    <div class="col-md-1 text-black-50" {% if object.rrs_first %}{% else %}hidden{% endif %}>
+                                        <a href="{% if object.rrs_first %}{{ object.rrs_first.url }}{% endif %}"><img
+                                                src="{% static 'assets/images/excel.png' %}" height="50" alt="Файл"></a>
+                                    </div>
+                                    <div class="col-md-3 text" {% if user.superintendent %} {% else %}
+                                         hidden {% endif %}>
+                                        <label for="id_first_reiter">Рейтер:</label>
+                                        {{ form.first_reiter }}
+                                    </div>
+                                    <div class="col-md-2 date" {% if user.superintendent %} {% else %}
+                                         hidden {% endif %}>
+                                        <label for="id_first_rss_time_start">Начало оценки</label>
+                                        <input type="date"
+                                               class="form-control form-control-modern"
+                                               name="first_rss_time_start"
+                                               value="{{ object.first_rss_time_start | date:'Y-m-d' }}"
+                                               id="id_first_rss_time_start"/>
+                                    </div>
+                                    <div class="col-md-2 date" {% if user.superintendent %} {% else %}
+                                         hidden {% endif %}>
+                                        <label for="id_first_rss_time_end">Окончание оценки</label>
+                                        <input type="date"
+                                               class="form-control form-control-modern"
+                                               name="first_rss_time_end"
+                                               value="{{ object.first_rss_time_end | date:'Y-m-d' }}"
+                                               id="id_first_rss_time_end"/>
+                                    </div>
+                                    <div class="col-md-2 text-black-50" {% if exp_reiter1 %} hidden {% endif %}>
+                                        <label for="id_rrs_first">Файл оценки рейтера:</label>
+                                        <input type="file" name="rrs_first"
+                                               class="form-control mb-4"
+                                               id="id_rrs_first" accept=".xlsx,.xls">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div {% if user.superintendent or user == object.second_reiter %} {% else %} hidden {% endif %}>
+                        <hr>
+                        <div class="form-row">
+                            <div class="form-group col mb-3">
+                                <div class="row">
+                                    <div class="col-md-1 text-black-50" {% if object.rrs_second %}{% else %}hidden{% endif %}>
+                                        <a href="{% if object.rrs_second %}{{ object.rrs_second.url }}{% endif %}"><img
+                                                src="{% static 'assets/images/excel.png' %}" height="50" alt="Файл"></a>
+                                    </div>
+                                    <div class="col-md-3 text"{% if user.superintendent %} {% else %}
+                                         hidden {% endif %}>
+                                        <label for="id_second_reiter">Рейтер:</label>
+                                        {{ form.second_reiter }}
+                                    </div>
+                                    <div class="col-md-2 date" {% if user.superintendent %} {% else %}
+                                         hidden {% endif %}>
+                                        <label for="id_second_rss_time_start">Начало оценки</label>
+                                        <input type="date"
+                                               class="form-control form-control-modern"
+                                               name="second_rss_time_start"
+                                               value="{{ object.second_rss_time_start | date:'Y-m-d' }}"
+                                               id="id_second_rss_time_start"/>
+                                    </div>
+                                    <div class="col-md-2 date" {% if user.superintendent %} {% else %}
+                                         hidden {% endif %}>
+                                        <label for="id_second_rss_time_end">Окончание оценки</label>
+                                        <input type="date"
+                                               class="form-control form-control-modern"
+                                               name="second_rss_time_end"
+                                               value="{{ object.second_rss_time_end | date:'Y-m-d' }}"
+                                               id="id_second_rss_time_end"/>
+                                    </div>
+                                    <div class="col-md-2 text-black-50" {% if exp_reiter2 %} hidden {% endif %}>
+                                        <label for="id_rrs_second">Файл оценки рейтера:</label>
+                                        <input type="file" name="rrs_second"
+                                               class="form-control mb-4"
+                                               id="id_rrs_second" accept=".xlsx,.xls">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div>
+                        {% autoescape off %}
+                            <span>{{ description.description }}</span>
+                        {% endautoescape %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Blog Section End -->
+{% endblock %}

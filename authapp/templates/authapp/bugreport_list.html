@@ -1,0 +1,48 @@
+{% extends 'tests/base.html' %}
+{% load static %}
+
+{% block title %}<title>{{ title }}</title>{% endblock %}
+
+{% block content %}
+    <!-- Blog Section Start -->
+    <div class="section section-padding">
+        <div class="container">
+            <div>
+                <div class="row mb-n8 row-cols-sm-2 row-cols-lg-3 row-cols-1  gy-10">
+                    <a class="btn btn-primary" href="{% url 'auth:bugreport_add' %}" role="button">Сообщить об ошибке</a>
+                </div>
+            </div>
+            <div class="row mb-n8 row-cols-sm-2 row-cols-lg-3 row-cols-1 gy-10">
+                <table class="table table-hover table-responsive">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Дата</th>
+                        <th scope="col">Пользователь</th>
+                        <th scope="col">Тема</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in object_list %}
+                        <tr>
+                            <th scope="row"><a href="{% url 'auth:bugreport_update' item.pk %}">{{ item.pk }}</a></th>
+                            <td><a href="{% url 'auth:bugreport_update' item.pk %}">{{ item.bug_time }}</a></td>
+                            <td><a href="{% url 'auth:bugreport_update' item.pk %}">{{ item.bug_report_user }}</a></td>
+                            <td><a href="{% url 'auth:bugreport_update' item.pk %}">{{ item.subject }}</a></td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <th scope="row">0</th>
+                            <td>Empty</td>
+                            <td>Empty</td>
+                            <td>Empty</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <!-- Single Blog End -->
+            </div>
+        </div>
+    </div>
+    <!-- Blog Section End -->
+{% endblock %}

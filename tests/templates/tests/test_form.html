@@ -1,0 +1,38 @@
+{% extends 'tests/base.html' %}
+{% load static %}
+
+{% block title %}<title>{{ title }}</title>{% endblock %}
+
+{% block content %}
+    <!-- Blog Section Start -->
+    <div class="section section-padding">
+        <div class="container">
+            <div class="row mb-n8 row-cols-sm-2 row-cols-lg-3 row-cols-1">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {{ form.media }}
+                    <div class="col-sm-12">
+                        <div><label>Категория: {{ form.category }}</label></div>
+                        <div><label>Наименование: <input type="text" {{form.name}} </label></div>
+                    </div>
+                    {{ form.description }}
+                    <div class="row">
+                        <label>
+                            Дата создания: <input type="date" {{ form.created }}
+                        </label>
+                        <label>
+                            Активный: {{ form.is_active }}
+                        </label>
+                        <label>
+                            Автор материала: {{ form.author }}
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+    <!-- Blog Section End -->
+{% endblock %}

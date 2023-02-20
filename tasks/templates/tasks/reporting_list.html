@@ -1,0 +1,98 @@
+{% extends 'tests/base.html' %}
+{% load static %}
+
+{% block title %}<title>{{ title }}</title>{% endblock %}
+
+{% block content %}
+    <!-- Blog Section Start -->
+    <div class="section section-padding">
+        <div class="container">
+            <div class="row col-sm-12">
+                <table class="table table-hover table-responsive">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col" {% if user.superintendent or user == object.examiner %} {% else %}
+                            hidden {% endif %}>Задание
+                        </th>
+                        <th scope="col">Тестируемый</th>
+                        <th scope="col">MP3</th>
+                        <th scope="col">ERS</th>
+                        <th scope="col">RRS</th>
+                        <th scope="col">RRS</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in object_list %}
+                        <tr>
+                            <th scope="row"><a href="{% url 'tests:task_report_edit' item.pk %}">{{ item.pk }}</a></th>
+                            <td {% if user.superintendent or user == object.examiner %} {% else %} hidden {% endif %}><a
+                                    href="{% url 'tests:task_report_edit' item.pk %}">{{ item.task_report }}</a></td>
+                            <td><a href="{% url 'tests:task_report_edit' item.pk %}">{{ item.student_uuid }}</a></td>
+                            <td>{% if item.exam_record %}
+                                <img src="{% static 'assets/images/check.png' %}" height="25" alt="Ok">{% endif %}</td>
+                            <td>{% if item.ers %}
+                                <img src="{% static 'assets/images/check.png' %}" height="25" alt="Ok">{% endif %}</td>
+                            <td>{% if item.rrs_first %}
+                                <img src="{% static 'assets/images/check.png' %}" height="25" alt="Ok">{% endif %}</td>
+                            <td>{% if item.rrs_second %}
+                                <img src="{% static 'assets/images/check.png' %}" height="25" alt="Ok">{% endif %}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <th scope="row">0</th>
+                            <td {% if user.superintendent or user == object.examiner %} {% else %} hidden {% endif %}>
+                                Empty
+                            </td>
+                            <td {% if user.superintendent or user == object.examiner %} {% else %} hidden {% endif %}>
+                                Empty
+                            </td>
+                            <td>Empty</td>
+                            <td>Empty</td>
+                            <td>Empty</td>
+                            <td>Empty</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <!-- Single Blog End -->
+            </div>
+            {% if user.is_superuser %}
+                <div class="row col-sm-12">
+                    <a class="btn btn-primary" href="{% url 'tests:task_report_add' %}" role="button">Добавить отчет</a>
+                </div>
+            {% endif %}
+            <div class="row col-sm-12">
+                <!-- Pagination Start -->
+                <div class="col" data-aos="fade-up" data-aos-delay="300">
+                    <ul class="pagination-cr mt-8 pt-8 border-top">
+                        {% if page_obj.has_previous %}
+                            <li><a href="?page={{ page_obj.previous_page_number }}"><i
+                                    class="fa fa-angle-double-left"></i> Prev</a></li>
+                        {% else %}
+                            <li><i class="fa fa-angle-double-left"></i> Prev</li>
+                        {% endif %}
+
+                        {% for page in page_obj.paginator.page_range %}
+                            {% if page == page_obj.number %}
+                                <li class="active"><a href="?page={{ page }}">0{{ page }}</a></li>
+                            {% elif page > page_obj.number|add:-3 and page < page_obj.number|add:3 %}
+                                <li><a href="?page={{ page }}">0{{ page }}</a></li>
+                            {% endif %}
+
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li><a href="?page={{ page_obj.next_page_number }}">Next <i
+                                    class="fa fa-angle-double-right"></i></a></li>
+                        {% else %}
+                            <li>Next <i class="fa fa-angle-double-right"></i></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <!-- Pagination End -->
+            </div>
+        </div>
+    </div>
+    <!-- Blog Section End -->
+{% endblock %}

@@ -1,0 +1,10 @@
+# Project exclude paths
+*.log
+*.pot
+*.pyc
+*.json
+.env
+__pycache__
+db.sqlite3
+media
+static

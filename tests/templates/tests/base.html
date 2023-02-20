@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    {% block title %}{% endblock %}
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+    <!-- Manual CSS -->
+    {% block css %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'tests/css/vendor.min.css' %}">
+    <link rel="stylesheet" href="{% static 'tests/css/plugins.min.css' %}">
+    <link rel="stylesheet" href="{% static 'tests/css/style.min.css' %}">
+{#    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">#}
+{#    <script defer src="{% static 'assets/js/jquery-3.6.3.min.js' %}"></script>#}
+
+
+
+</head>
+
+<body>
+{% include 'tests/header.html' %}
+
+{% block content %}{% endblock %}
+
+{% include 'tests/footer.html' %}
+
+<!-- Scroll Top Start -->
+<a href="#" class="scroll-top" id="scroll-top">
+    <i class="arrow-top fa fa-long-arrow-up"></i>
+    <i class="arrow-bottom fa fa-long-arrow-up"></i>
+</a>
+<script>
+//запрещает нажатие правой кнопки мыши на сайте
+document.oncontextmenu = cmenu; function cmenu() { return false; }
+</script>
+<script>
+//запрещает выделение мышкой и комбинации клавиш Ctrl + A и Ctrl + U и Ctrl + S
+function preventSelection(element){
+  var preventSelection = false;
+  function addHandler(element, event, handler){
+  if (element.attachEvent) element.attachEvent('on' + event, handler);
+  else if (element.addEventListener) element.addEventListener(event, handler, false);  }
+  function removeSelection(){
+  if (window.getSelection) { window.getSelection().removeAllRanges(); }
+  else if (document.selection && document.selection.clear)
+  document.selection.clear();
+  }
+
+  //запрещаем выделять текст мышкой
+  addHandler(element, 'mousemove', function(){ if(preventSelection) removeSelection(); });
+  addHandler(element, 'mousedown', function(event){ var event = event || window.event; var sender = event.target || event.srcElement; preventSelection = !sender.tagName.match(/INPUT|TEXTAREA/i) ;});
+
+  //запрещаем нажатие клавищ Ctrl + A и Ctrl + U и Ctrl + S
+  function killCtrlA(event){
+  var event = event || window.event;
+  var sender = event.target || event.srcElement;
+  if (sender.tagName.match(/INPUT|TEXTAREA/i)) return;
+  var key = event.keyCode || event.which;
+  if ((event.ctrlKey && key == 'U'.charCodeAt(0)) || (event.ctrlKey && key == 'A'.charCodeAt(0)) || (event.ctrlKey && key == 'S'.charCodeAt(0)))  // 'A'.charCodeAt(0) можно заменить на 65
+  { removeSelection();
+  if (event.preventDefault) event.preventDefault();
+  else event.returnValue = false;}}
+  addHandler(element, 'keydown', killCtrlA);
+  addHandler(element, 'keyup', killCtrlA);
+}
+preventSelection(document);
+</script>
+<script src="{% static 'tests/js/vendor.min.js' %}"></script>
+<script src="{% static 'tests/js/plugins.min.js' %}"></script>
+
+<!--Main JS-->
+<script src="{% static 'tests/js/main.js' %}"></script>
+{#<script src="{% static 'assets/js/bootstrap.min.js' %}"></script>#}
+{#<script src="{% static 'assets/js/popper.min.js' %}"></script>#}
+
+</body>
+
+</html>

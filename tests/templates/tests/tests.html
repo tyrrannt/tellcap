@@ -1,0 +1,43 @@
+{% extends 'tests/base.html' %}
+{% load static %}
+
+{% block title %}<title>{{ title }}</title>{% endblock %}
+
+{% block content %}
+    <!-- Blog Section Start -->
+    <div class="section section-padding">
+    <div class="container">
+        <div class="row">
+            <!-- Blog Main Area Start -->
+            <div class="col-lg-9 m-auto">
+                <!-- Single Post Details Start -->
+                <div class="blog-details mb-10">
+                    <!-- Single Post Details Content Start -->
+                    <div class="content" data-aos="fade-up" data-aos-delay="300">
+                        <!-- Title Start -->
+                        <h2 class="title mb-3">{{ tests.name }}</h2>
+                        <!-- Title End -->
+                        <!-- Meta List Start -->
+                        {% if user.is_superuser %}
+                            <div class="meta-list mb-3">
+                                <span>By <a href="#" class="meta-item author mr-1">{{ tests.author }},</a></span>
+                                <span class="meta-item date">{{ tests.created }}</span>
+                            </div>
+                        {% endif %}
+                        <!-- Meta List End -->
+                        <!-- Description Start -->
+                        <div class="desc">
+                            {% autoescape off %}
+                                {{ tests.description }}
+                            {% endautoescape %}
+                        </div>
+                        <!-- Description End -->
+                    </div>
+                    <!-- Single Post Details Content End -->
+                </div>
+                <!-- Blog Main Area End -->
+            </div>
+        </div>
+    </div>
+    <!-- Blog Section End -->
+{% endblock %}

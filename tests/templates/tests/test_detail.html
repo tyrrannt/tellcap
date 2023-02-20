@@ -1,0 +1,29 @@
+{% extends 'tests/base.html' %}
+{% load static %}
+
+{% block title %}<title>{{ title }}</title>{% endblock %}
+
+{% block content %}
+    <!-- Blog Section Start -->
+    <div class="section section-padding">
+        <div class="container">
+            <a href="{% url 'tests:edit_test' object.pk %}" class="btn btn-primary">Редактировать</a>
+            <a href="{% url 'tests:delete_test' object.pk %}" class="btn btn-primary">Удалить</a>
+            <div class="card text-center">
+                <div class="card-header">
+                    <h5 class="card-title">Наименование: {{ object.name }}</h5>
+                </div>
+                <div class="card-body" align="left">
+                    <strong></strong>
+                    <p class="card-text" style="">{{ object.description | safe }}</p>
+                </div>
+                <div class="card-footer text-muted">
+                    Автор: {{ object.author.firstname }} {{ object.author.lastname }} / Дата
+                    создания: {{ object.created }}
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Blog Section End -->
+{% endblock %}

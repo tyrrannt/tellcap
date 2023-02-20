@@ -1,0 +1,23 @@
+{% extends 'tests/base.html' %}
+{% load static %}
+
+{% block title %}<title>{{ title }}</title>{% endblock %}
+
+{% block content %}
+    <!-- Blog Section Start -->
+    <div class="section section-padding">
+        <div class="container">
+            <div class="row mb-n8 row-cols-sm-2 row-cols-lg-3 row-cols-1">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </form>
+            </div>
+            {#            <div class="row mb-n8 row-cols-sm-2 row-cols-lg-3 row-cols-1">#}
+            {#                <a class="btn btn-primary" href="{% url 'tests:add_category' %}" role="button">Добавить категорию</a>#}
+            {#            </div>#}
+        </div>
+    </div>
+    <!-- Blog Section End -->
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends 'tests/base.html' %}
+{% load static %}
+
+{% block title %}<title>{{ title }}</title>{% endblock %}
+
+{% block content %}
+    <!-- Blog Section Start -->
+    <div class="section section-padding">
+        <div class="container">
+            <p>Внимание! Убедитесь что время на вашем устройстве соответствует местному времени {{ date_time }}</p>
+            <div class="row mb-n8 row-cols-sm-2 row-cols-lg-3 row-cols-1">
+                <!-- Single Blog Start
+{#                {% for item in tasks %}#}
+{#                    <span>{{ item.examiner.username }}</span>#}
+{#                    <span>{{ item.test_module.name }}</span>#}
+{#                {% endfor %} -->#}-->
+                {% if user.is_superuser %}
+                    {% for item in page_obj %}
+                        <div class="col mb-8">
+                            <div class="blog-single-post-wrapper alert alert-primary" data-aos="fade-up"
+                                 data-aos-delay="100">
+                                <div class="blog-content">
+                                    <div class="post-meta">
+                                        <span><a
+                                                href="#">{{ item.author.first_name }} {{ item.author.last_name }}</a></span>
+                                        <span>{{ item.created }}</span>
+                                    </div>
+                                    <h3 class="title"><a href="{% url 'tests:testing' item.pk %}">{{ item.name }}</a>
+                                    </h3>
+                                    <a class="link" href="{% url 'tests:testing' item.pk %}">Перейти к файлу</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="col mb-8">
+                            <div class="blog-single-post-wrapper alert alert-secondary" data-aos="fade-up"
+                                 data-aos-delay="100">
+                                <div class="blog-content">
+                                    <div class="post-meta">
+                                        <span>By : User</span>
+                                        <span>Mounth Day, Year</span>
+                                    </div>
+                                    <h3 class="title">Пустая форма</h3>
+                                    <p>Тут пока ничего нет...</p>
+                                    <a class="link" href="{% url 'tests:main' %}">Заглушка</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    {% for item in page_obj %}
+                        <div class="col mb-8">
+                            <div class="blog-single-post-wrapper alert alert-primary" data-aos="fade-up"
+                                 data-aos-delay="100">
+                                <div class="blog-content">
+                                    <div class="post-meta">
+                                        <span><a
+                                                href="#">{{ item.test_module.author.first_name }} {{ item.test_module.author.last_name }}</a></span>
+                                        <span>{{ item.test_module.created }}</span>
+                                    </div>
+                                    <h3 class="title"><a
+                                            href="{% url 'tests:testing' item.test_module.pk %}">{{ item.test_module.name }}</a>
+                                    </h3>
+                                    <a class="link" href="{% url 'tests:testing' item.test_module.pk %}">Перейти к
+                                        файлу</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="col mb-8">
+                            <div class="blog-single-post-wrapper alert alert-secondary" data-aos="fade-up"
+                                 data-aos-delay="100">
+                                <div class="blog-content">
+                                    <div class="post-meta">
+                                        <span>By : User</span>
+                                        <span>Mounth Day, Year</span>
+                                    </div>
+                                    <h3 class="title">Пустая форма</h3>
+                                    <p>Тут пока ничего нет...</p>
+                                    <a class="link" href="{% url 'tests:main' %}">Заглушка</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <!-- Single Blog End -->
+            </div>
+            <div class="col" data-aos="fade-up" data-aos-delay="300">
+                    <ul class="pagination-cr mt-8 pt-8 border-top">
+                        {% if page_obj.has_previous %}
+                            <li><a href="?page={{ page_obj.previous_page_number }}"><i
+                                    class="fa fa-angle-double-left"></i> Prev</a></li>
+                        {% else %}
+                            <li><i class="fa fa-angle-double-left"></i> Prev</li>
+                        {% endif %}
+
+                        {% for page in page_obj.paginator.page_range %}
+                            {% if page == page_obj.number %}
+                                <li class="active"><a href="?page={{ page }}">0{{ page }}</a></li>
+                            {% elif page > page_obj.number|add:-3 and page < page_obj.number|add:3 %}
+                                <li><a href="?page={{ page }}">0{{ page }}</a></li>
+                            {% endif %}
+
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li><a href="?page={{ page_obj.next_page_number }}">Next <i
+                                    class="fa fa-angle-double-right"></i></a></li>
+                        {% else %}
+                            <li>Next <i class="fa fa-angle-double-right"></i></li>
+                        {% endif %}
+                    </ul>
+                </div>
+        </div>
+    </div>
+    <!-- Blog Section End -->
+{% endblock %}
