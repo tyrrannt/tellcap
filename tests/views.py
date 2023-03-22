@@ -253,7 +253,7 @@ class TaskReportsList(LoginRequiredMixin, ListView):
     def get_queryset(self):
         examiner_list = CustomUser.objects.filter(organisation=self.request.user.organisation)
         if self.request.user.is_superuser:
-            qs = Reporting.objects.all().order_by('pk').reverse()
+            qs = Reporting.objects.filter(reporting_visible=True).order_by('pk').reverse()
         elif self.request.user.superintendent:
             qs = Reporting.objects.filter(examiner__in=examiner_list).order_by('pk').reverse()
         else:

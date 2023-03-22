@@ -66,5 +66,5 @@ class TaskReportUpdateForm(forms.ModelForm):
         model = Reporting
         fields = ['student_uuid', 'exam_record', 'examiner', 'ers', 'ers_time_start', 'ers_time_end',
                   'first_reiter', 'first_rss_time_start', 'first_rss_time_end', 'rrs_first', 'second_reiter',
-                  'second_rss_time_start', 'second_rss_time_end', 'rrs_second', 'completed']
+                  'second_rss_time_start', 'second_rss_time_end', 'rrs_second', 'completed', 'reporting_visible']
 

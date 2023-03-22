@@ -47,6 +47,14 @@
                                     <i class="bx bx-trash text-4 me-2"></i> Удалить
                                 </a>
                             </div>
+                            <div class="col-12 col-md-auto ms-md-auto mt-3 mt-md-0 ms-auto">
+                                <label for="id_reporting_visible">Активный:</label>
+                                {% if user.is_superuser %}
+                                    {{ form.reporting_visible }}
+                                {% else %}
+                                    <input type="checkbox" id="id_reporting_visible" name="reporting_visible" {% if object.reporting_visible %}checked="checked"{% endif %} onclick="javascript: return false;" />
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                     <hr>
