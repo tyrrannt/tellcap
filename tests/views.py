@@ -51,6 +51,7 @@ def main(request, pk=None):
     page_obj = paginator.get_page(page_number)
     content = {'title': title, 'category': categoryes, 'page_obj': page_obj, 'date_time': timezone.localtime(timezone.now())}
     request.session.set_expiry(900)
+    request.session['purpose_expire'] = '0'
     return render(request, 'tests/index.html', content)
 
 

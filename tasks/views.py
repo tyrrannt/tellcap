@@ -9,6 +9,7 @@ from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from loguru import logger
 
 from authapp.models import CustomUser
 from tasks.forms import PurposeAddForm, PurposeUpdateForm, FileUploadAddForm, FileUploadDeleteForm, FileUploadUpdateForm
@@ -16,9 +17,15 @@ from tasks.models import Task, Reporting, FileUpload
 from tellcap.settings import BASE_DIR
 from tests.views import get_category
 
+logger.add("debug.json", format="{time} {level} {message}", level="DEBUG", rotation="10 MB", compression="zip",
+           serialize=True)
+
 
 # Create your views here.
 class PurposeList(LoginRequiredMixin, ListView):
+    """
+    Список задач
+    """
     model = Task
     paginate_by = 10
 
@@ -26,8 +33,12 @@ class PurposeList(LoginRequiredMixin, ListView):
         qs = super().get_queryset()
         examiner_list = CustomUser.objects.filter(organisation=self.request.user.organisation)
         if self.request.user.is_superuser:
-            qs = Task.objects.filter(visible_date_end__gte=datetime.datetime.now(tz=timezone.utc)).filter(
-                deleted=False).order_by('pk').reverse()
+            if self.request.session['purpose_expire'] == '0':
+                print('1')
+                qs = Task.objects.filter(visible_date_end__gte=datetime.datetime.now(tz=timezone.utc)).filter(
+                    deleted=False).order_by('pk').reverse()
+            else:
+                qs = Task.objects.filter(deleted=False).order_by('pk').reverse()
         elif self.request.user.superintendent:
             qs = Task.objects.filter(examiner__in=examiner_list).filter(
                 visible_date_end__gte=datetime.datetime.now(tz=timezone.utc)).filter(deleted=False).order_by(
@@ -43,6 +54,11 @@ class PurposeList(LoginRequiredMixin, ListView):
         context['title'] = f':: TELLCAP :: Задачи'
         context['category'] = get_category()
         return context
+
+    def get(self, request, *args, **kwargs):
+        if self.request.GET.get('purpose_expire'):
+            self.request.session['purpose_expire'] = self.request.GET.get('purpose_expire')
+        return super().get(request, *args, **kwargs)
 
 
 class PurposeAdd(LoginRequiredMixin, CreateView):
@@ -121,7 +137,11 @@ class FileUploadUpdate(LoginRequiredMixin, UpdateView):
         if form.is_valid():
             obj_item = self.get_object()
             path = pathlib.Path.joinpath(BASE_DIR, 'media', obj_item.file_field.name)
-            os.remove(path)
+            try:
+                os.remove(path)
+            except FileNotFoundError:
+                logger.error(f'Ошибка удаления файла при обновлении {obj_item.file_field.name}')
+            form.save()
         return super().form_valid(form)
 
 
@@ -136,7 +156,8 @@ class FileUploadAdd(LoginRequiredMixin, CreateView):
             obj_pk = obj_item.first()
             errors = {'Файл': 'Уже загружен'}
             if obj_item.count() > 0:
-                form.add_error('file_field', forms.ValidationError(f'Уже загружен. <a href="/tasks/upload/{obj_pk.pk}" class="btn btn-primary">Заменить?</a>'))
+                form.add_error('file_field', forms.ValidationError(
+                    f'Уже загружен. <a href="/tasks/upload/{obj_pk.pk}" class="btn btn-primary">Заменить?</a>'))
 
                 return self.form_invalid(form)
         return super().form_valid(form)

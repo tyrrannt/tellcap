@@ -13,7 +13,10 @@ from authapp.models import CustomUser
 from tellcap.settings import BASE_DIR, EMAIL_HOST_USER
 from tests.models import Test
 from django.utils.timezone import now
+from loguru import logger
 
+logger.add("debug.json", format="{time} {level} {message}", level="DEBUG", rotation="10 MB", compression="zip",
+           serialize=True)
 date = now
 
 
@@ -41,7 +44,7 @@ class Task(models.Model):
 
 def directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT / user_<id>/<filename>
-    dt = datetime.datetime.today()
+    dt = instance.task_report.visible_date_start
     return f'report/{dt.year}/{dt.month}/{dt.day}/{filename}'
 
 
@@ -50,7 +53,7 @@ class Reporting(models.Model):
         verbose_name_plural = 'Отчеты'
         verbose_name = 'Отчет'
 
-    task_report = models.OneToOneField(Task, verbose_name='Задача', on_delete=models.CASCADE)
+    task_report = models.OneToOneField(Task, verbose_name='Задача', on_delete=models.CASCADE, related_name='reporting')
     student_uuid = models.CharField(verbose_name='Уникальный номер экзаменуемого', max_length=4)
     exam_record = models.FileField(verbose_name='Аудиозапись', upload_to=directory_path, blank=True)
     examiner = models.ForeignKey(CustomUser, verbose_name='Экзаминатор', on_delete=models.SET_NULL, null=True,
@@ -81,12 +84,12 @@ class Reporting(models.Model):
 def create_report(sender, instance, **kwargs):
     try:
         if instance.create_reporting:
-            if instance.reporting:
-                reporting = instance.reporting
-                reporting.student_uuid = instance.student_uuid
-                reporting.examiner = instance.examiner
-                reporting.save()
-            else:
+            try:
+                obj = Reporting.objects.get(task_report=instance.pk)
+                obj.student_uuid = instance.student_uuid
+                obj.examiner = instance.examiner
+                obj.save()
+            except Exception as _ex:
                 new_report = Reporting(task_report=instance, examiner=instance.examiner,
                                        student_uuid=instance.student_uuid)
                 new_report.save()
@@ -118,6 +121,7 @@ def rename(file_name, path_name, instance, pfx):
             # Получаем расширение файла
             ext = file_name.split('.')[-1]
             dt = instance.task_report.visible_date_start
+            print(dt)
             # Формируем уникальное окончание файла. Длинна в 7 символов. В окончании номер записи: рк, спереди дополняющие нули
             uid = str(dt.year) + str(dt.month) + str(dt.day) + '_' + str(
                 instance.task_report.test_module.name) + '_' + str(instance.student_uuid) + pfx
@@ -203,8 +207,10 @@ def change_filename(sender, instance, **kwargs):
     try:
         # Получаем имя сохраненного файла
         file_name = pathlib.Path(instance.exam_record.name).name
+        print(file_name)
         # Получаем путь к файлу
         path_name = pathlib.Path(instance.exam_record.name).parent
+        print(path_name)
         rename(file_name, path_name, instance, '')
 
     except Exception as _ex:
@@ -252,5 +258,8 @@ class FileUpload(models.Model):
     
     def delete(self, using=None, keep_parents=False):
         path = pathlib.Path.joinpath(BASE_DIR, 'media', self.file_field.name)
-        os.remove(path)
+        try:
+            os.remove(path)
+        except FileNotFoundError:
+            logger.error(f'Ошибка удаления файла {self.file_field.name}')
         return super().delete()
