@@ -296,23 +296,28 @@ class TaskReportsEdit(LoginRequiredMixin, UpdateView):
             context['exp_examiner'] = True if self.object.ers_time_end < today else False
             # Также проверка доступности материала для рейтирования, если время прошло, доступ закрывается
             if self.object.ers_time_end > today and self.request.user == self.object.examiner:
-                description = Test.objects.get(name__contains=(test_module[:-1] + 'R'))
+                try:
+                    description = Test.objects.get(name__contains=(test_module[:-1] + 'R'))
+                except Exception as _ex:
+                    description = Test.objects.get(name__contains=(test_module[:-1]))
         except TypeError:
             pass
         try:
             # Проверка доступности теста exp_ = истина (не доступен) иначе (доступен)
             context['exp_reiter1'] = True if self.object.first_rss_time_end < today else False
             # Также проверка доступности материала для рейтирования, если время прошло, доступ закрывается
-            if self.object.first_rss_time_end > today and self.request.user == self.object.first_reiter:
+            if self.object.first_rss_time_end >= today and self.request.user == self.object.first_reiter:
                 description = Test.objects.get(name__contains=(test_module[:-1] + 'R'))
+
         except TypeError:
             pass
         try:
             # Проверка доступности теста exp_ = истина (не доступен) иначе (доступен)
             context['exp_reiter2'] = True if self.object.second_rss_time_end < today else False
             # Также проверка доступности материала для рейтирования, если время прошло, доступ закрывается
-            if self.object.second_rss_time_end > today and self.request.user == self.object.second_reiter:
+            if self.object.second_rss_time_end >= today and self.request.user == self.object.second_reiter:
                 description = Test.objects.get(name__contains=(test_module[:-1] + 'R'))
+
         except TypeError:
             pass
         if not self.request.user.is_superuser:
