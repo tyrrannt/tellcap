@@ -90,9 +90,12 @@ def create_report(sender, instance, **kwargs):
     try:
         if instance.create_reporting:
             try:
+                print(instance.visible_date_start.date())
                 obj = Reporting.objects.get(task_report=instance.pk)
                 obj.student_uuid = instance.student_uuid
                 obj.examiner = instance.examiner
+                obj.ers_time_start = instance.visible_date_start.date()
+                obj.ers_time_end = instance.visible_date_end.date()
                 obj.save()
             except Exception as _ex:
                 new_report = Reporting(task_report=instance, examiner=instance.examiner,

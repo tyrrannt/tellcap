@@ -3,6 +3,7 @@ from authapp.models import CustomUser, Organisation, BugReport
 # Register your models here.
 from django.contrib.auth.admin import UserAdmin
 
+@admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     """
     Расширяем модель UserAdmin
@@ -21,7 +22,14 @@ class CustomUserAdmin(UserAdmin):
             },
         ),
     )
+    list_display = (
+        "personal_code",
+        "username",
+        "first_name",
+        "last_name",
+        "is_staff",
+        "is_active",
+    )
 
-admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Organisation)
 admin.site.register(BugReport)

@@ -4,16 +4,14 @@ import pathlib
 
 from django import forms
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from loguru import logger
 
 from authapp.models import CustomUser
-from tasks.forms import PurposeAddForm, PurposeUpdateForm, FileUploadAddForm, FileUploadDeleteForm, FileUploadUpdateForm
-from tasks.models import Task, Reporting, FileUpload
+from tasks.forms import PurposeAddForm, PurposeUpdateForm, FileUploadAddForm, FileUploadUpdateForm
+from tasks.models import Task, FileUpload
 from tellcap.settings import BASE_DIR
 from tests.views import get_category
 

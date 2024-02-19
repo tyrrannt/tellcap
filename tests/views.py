@@ -306,7 +306,7 @@ class TaskReportsEdit(LoginRequiredMixin, UpdateView):
         today = datetime.date(now.year, now.month, now.day)
         try:
             # Проверка доступности теста exp_ = истина (не доступен) иначе (доступен)
-            context['exp_examiner'] = True if date_compare(today, self.object, 'ers') else False
+            context['exp_examiner'] = True if not date_compare(today, self.object, 'ers') else False
             # Также проверка доступности материала для рейтирования, если время прошло, доступ закрывается
             if date_compare(today, self.object, 'ers') and self.request.user == self.object.examiner:
                 try:
@@ -317,7 +317,7 @@ class TaskReportsEdit(LoginRequiredMixin, UpdateView):
             pass
         try:
             # Проверка доступности теста exp_ = истина (не доступен) иначе (доступен)
-            context['exp_reiter1'] = True if date_compare(today, self.object, 'rss1') else False
+            context['exp_reiter1'] = True if not date_compare(today, self.object, 'rss1') else False
             # Также проверка доступности материала для рейтирования, если время прошло, доступ закрывается
             if date_compare(today, self.object, 'rss1') and self.request.user == self.object.first_reiter:
                 description = Test.objects.get(name__contains=(test_module[:-1] + 'R'))
@@ -325,7 +325,7 @@ class TaskReportsEdit(LoginRequiredMixin, UpdateView):
             pass
         try:
             # Проверка доступности теста exp_ = истина (не доступен) иначе (доступен)
-            context['exp_reiter2'] = True if date_compare(today, self.object, 'rss2') else False
+            context['exp_reiter2'] = True if not date_compare(today, self.object, 'rss2') else False
             # Также проверка доступности материала для рейтирования, если время прошло, доступ закрывается
             if date_compare(today, self.object, 'rss2') and self.request.user == self.object.second_reiter:
                 description = Test.objects.get(name__contains=(test_module[:-1] + 'R'))
