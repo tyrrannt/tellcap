@@ -49,7 +49,8 @@ def main(request, pk=None):
         paginator = Paginator(tests.order_by('name'), 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    content = {'title': title, 'category': categoryes, 'page_obj': page_obj, 'date_time': timezone.localtime(timezone.now())}
+    content = {'title': title, 'category': categoryes, 'page_obj': page_obj,
+               'date_time': timezone.localtime(timezone.now())}
     request.session.set_expiry(900)
     request.session['purpose_expire'] = '0'
     return render(request, 'tests/index.html', content)
@@ -280,6 +281,18 @@ class TaskReportsAdd(LoginRequiredMixin, CreateView):
         return context
 
 
+def date_compare(date: datetime.date, object: Reporting, name: str) -> bool:
+    try:
+        if name == 'ers':
+            return object.ers_time_start <= date <= object.ers_time_end
+        if name == 'rss1':
+            return object.first_rss_time_start <= date <= object.first_rss_time_end
+        if name == 'rss2':
+            return object.second_rss_time_start <= date <= object.second_rss_time_end
+    except TypeError:
+        return False
+
+
 class TaskReportsEdit(LoginRequiredMixin, UpdateView):
     model = Reporting
     form_class = TaskReportUpdateForm
@@ -293,9 +306,9 @@ class TaskReportsEdit(LoginRequiredMixin, UpdateView):
         today = datetime.date(now.year, now.month, now.day)
         try:
             # Проверка доступности теста exp_ = истина (не доступен) иначе (доступен)
-            context['exp_examiner'] = True if self.object.ers_time_end < today else False
+            context['exp_examiner'] = True if date_compare(today, self.object, 'ers') else False
             # Также проверка доступности материала для рейтирования, если время прошло, доступ закрывается
-            if self.object.ers_time_end > today and self.request.user == self.object.examiner:
+            if date_compare(today, self.object, 'ers') and self.request.user == self.object.examiner:
                 try:
                     description = Test.objects.get(name__contains=(test_module[:-1] + 'R'))
                 except Exception as _ex:
@@ -304,20 +317,18 @@ class TaskReportsEdit(LoginRequiredMixin, UpdateView):
             pass
         try:
             # Проверка доступности теста exp_ = истина (не доступен) иначе (доступен)
-            context['exp_reiter1'] = True if self.object.first_rss_time_end < today else False
+            context['exp_reiter1'] = True if date_compare(today, self.object, 'rss1') else False
             # Также проверка доступности материала для рейтирования, если время прошло, доступ закрывается
-            if self.object.first_rss_time_end >= today and self.request.user == self.object.first_reiter:
+            if date_compare(today, self.object, 'rss1') and self.request.user == self.object.first_reiter:
                 description = Test.objects.get(name__contains=(test_module[:-1] + 'R'))
-
         except TypeError:
             pass
         try:
             # Проверка доступности теста exp_ = истина (не доступен) иначе (доступен)
-            context['exp_reiter2'] = True if self.object.second_rss_time_end < today else False
+            context['exp_reiter2'] = True if date_compare(today, self.object, 'rss2') else False
             # Также проверка доступности материала для рейтирования, если время прошло, доступ закрывается
-            if self.object.second_rss_time_end >= today and self.request.user == self.object.second_reiter:
+            if date_compare(today, self.object, 'rss2') and self.request.user == self.object.second_reiter:
                 description = Test.objects.get(name__contains=(test_module[:-1] + 'R'))
-
         except TypeError:
             pass
         if not self.request.user.is_superuser:

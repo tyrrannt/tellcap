@@ -84,7 +84,27 @@
                                            value="{{ object.student_uuid }}"
                                            id="id_student_uuid"/>
                                 </div>
-                            {% if user == object.examiner or user.is_superuser %}
+                            {% if user.is_superuser %}
+                                <div class="col-md-12 text-black-50" style="padding-top: 10px">
+                                    <label for="id_exam_record">Аудиозапись экзамена:</label>
+                                    {% autoescape off %}
+                                        <audio controls="controls" crossorigin="anonymous" style="width:100%;"
+                                               {% if user.superintendent %}{% else %}controlsList="nodownload"{% endif %}>
+                                            <source src="
+                                                    {% if object.exam_record %}{{ object.exam_record.url }}{% endif %}"
+                                                    type="audio/mpeg">
+                                        </audio>
+                                    {% endautoescape %}
+
+                                    <input type="file" name="exam_record" class="form-control mb-4"
+                                           id="id_exam_record"
+                                           value="{% if object.exam_record %}{{ object.exam_record.url }}{% endif %}"
+                                           accept="audio/*"
+                                            {% if user.superintendent or user == object.examiner %} {% else %}
+                                           hidden {% endif %}>
+                                </div>
+                            {% endif %}
+                            {% if user == object.examiner and not exp_examiner %}
                                 <div class="col-md-12 text-black-50" style="padding-top: 10px">
                                     <label for="id_exam_record">Аудиозапись экзамена:</label>
                                     {% autoescape off %}

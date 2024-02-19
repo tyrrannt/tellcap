@@ -3,6 +3,7 @@ import os
 import pathlib
 from decouple import config
 from django.core.mail import EmailMultiAlternatives
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -36,7 +37,7 @@ class Task(models.Model):
 
     def __str__(self):
         new_format = "%Y-%m-%d"
-        return f"{self.test_module} : {self.examiner} : с {self.visible_date_start.strftime(new_format)} по {self.visible_date_end.strftime(new_format)}"
+        return f"{self.examiner} : с {self.visible_date_start.strftime(new_format)} по {self.visible_date_end.strftime(new_format)}"
 
     def get_absolute_url(self):
         return reverse('tasks:purpose_list')
@@ -55,10 +56,14 @@ class Reporting(models.Model):
 
     task_report = models.OneToOneField(Task, verbose_name='Задача', on_delete=models.CASCADE, related_name='reporting')
     student_uuid = models.CharField(verbose_name='Уникальный номер экзаменуемого', max_length=4)
-    exam_record = models.FileField(verbose_name='Аудиозапись', upload_to=directory_path, blank=True)
+    exam_record = models.FileField(
+        verbose_name='Аудиозапись',
+        upload_to=directory_path,
+        blank=True,
+        validators=[FileExtensionValidator(allowed_extensions=('mp3', 'm4a'))])
     examiner = models.ForeignKey(CustomUser, verbose_name='Экзаминатор', on_delete=models.SET_NULL, null=True,
                                  related_name='examiner_person')
-    ers = models.FileField(verbose_name='Оценка экзаменатора', upload_to=directory_path, blank=True)
+    ers = models.FileField(verbose_name='Оценка экзаменатора', upload_to=directory_path, blank=True, validators=[FileExtensionValidator(allowed_extensions=('xlsx', 'xls',))])
     ers_time_start = models.DateField(verbose_name='Начало оценки экзаменатора', null=True, blank=True)
     ers_time_end = models.DateField(verbose_name='Окончание оценки экзаменатора', null=True, blank=True)
     first_reiter = models.ForeignKey(CustomUser, verbose_name='Рейтер', on_delete=models.SET_NULL, null=True,
@@ -66,13 +71,13 @@ class Reporting(models.Model):
     first_reiter_email_send = models.BooleanField(verbose_name='Отправлено письмо', default=False)
     first_rss_time_start = models.DateField(verbose_name='Начало оценки первого рейтера', null=True, blank=True)
     first_rss_time_end = models.DateField(verbose_name='Окончание оценки первого рейтера', null=True, blank=True)
-    rrs_first = models.FileField(verbose_name='Оценка рейтера 1', upload_to=directory_path, blank=True)
+    rrs_first = models.FileField(verbose_name='Оценка рейтера 1', upload_to=directory_path, blank=True, validators=[FileExtensionValidator(allowed_extensions=('xlsx', 'xls',))])
     second_reiter = models.ForeignKey(CustomUser, verbose_name='Рейтер', on_delete=models.SET_NULL, null=True,
                                       related_name='second_reiter_person', blank=True)
     second_reiter_email_send = models.BooleanField(verbose_name='Отправлено письмо', default=False)
     second_rss_time_start = models.DateField(verbose_name='Начало оценки второго рейтера', null=True, blank=True)
     second_rss_time_end = models.DateField(verbose_name='Окончание оценки второго рейтера', null=True, blank=True)
-    rrs_second = models.FileField(verbose_name='Оценка рейтера 2', upload_to=directory_path, blank=True)
+    rrs_second = models.FileField(verbose_name='Оценка рейтера 2', upload_to=directory_path, blank=True, validators=[FileExtensionValidator(allowed_extensions=('xlsx', 'xls',))])
     completed = models.BooleanField(verbose_name='Завершён', default=False)
     reporting_visible = models.BooleanField(verbose_name='Видимость в списке', default=True)
 
