@@ -284,11 +284,40 @@ class TaskReportsAdd(LoginRequiredMixin, CreateView):
 def date_compare(date: datetime.date, object: Reporting, name: str) -> bool:
     try:
         if name == 'ers':
-            return object.ers_time_start <= date <= object.ers_time_end
+            if date >= object.ers_time_start:
+                if object.ers_time_end:
+                    if date <= object.ers_time_end:
+                        return True
+                    else:
+                        return False
+                else:
+                    return True
+            else:
+                return False
         if name == 'rss1':
-            return object.first_rss_time_start <= date <= object.first_rss_time_end
+            if name == 'ers':
+                if date >= object.first_rss_time_start:
+                    if object.first_rss_time_end:
+                        if date <= object.first_rss_time_end:
+                            return True
+                        else:
+                            return False
+                    else:
+                        return True
+                else:
+                    return False
         if name == 'rss2':
-            return object.second_rss_time_start <= date <= object.second_rss_time_end
+            if name == 'ers':
+                if date >= object.second_rss_time_start:
+                    if object.second_rss_time_end:
+                        if date <= object.second_rss_time_end:
+                            return True
+                        else:
+                            return False
+                    else:
+                        return True
+                else:
+                    return False
     except TypeError:
         return False
 

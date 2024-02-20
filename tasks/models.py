@@ -95,7 +95,7 @@ def create_report(sender, instance, **kwargs):
                 obj.student_uuid = instance.student_uuid
                 obj.examiner = instance.examiner
                 obj.ers_time_start = instance.visible_date_start.date()
-                obj.ers_time_end = instance.visible_date_end.date()
+                obj.first_rss_time_start = instance.instance.visible_date_start.date()
                 obj.save()
             except Exception as _ex:
                 new_report = Reporting(task_report=instance, examiner=instance.examiner,
