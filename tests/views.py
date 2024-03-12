@@ -295,29 +295,29 @@ def date_compare(date: datetime.date, object: Reporting, name: str) -> bool:
             else:
                 return False
         if name == 'rss1':
-            if name == 'ers':
-                if date >= object.first_rss_time_start:
-                    if object.first_rss_time_end:
-                        if date <= object.first_rss_time_end:
-                            return True
-                        else:
-                            return False
-                    else:
+            if date >= object.first_rss_time_start:
+                if object.first_rss_time_end:
+                    if date <= object.first_rss_time_end:
                         return True
+                    else:
+                        return False
                 else:
-                    return False
+                    return True
+            else:
+                return False
+
         if name == 'rss2':
-            if name == 'ers':
-                if date >= object.second_rss_time_start:
-                    if object.second_rss_time_end:
-                        if date <= object.second_rss_time_end:
-                            return True
-                        else:
-                            return False
-                    else:
+            if date >= object.second_rss_time_start:
+                if object.second_rss_time_end:
+                    if date <= object.second_rss_time_end:
                         return True
+                    else:
+                        return False
                 else:
-                    return False
+                    return True
+            else:
+                return False
+
     except TypeError:
         return False
 

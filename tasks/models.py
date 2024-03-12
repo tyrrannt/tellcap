@@ -99,7 +99,8 @@ def create_report(sender, instance, **kwargs):
                 obj.save()
             except Exception as _ex:
                 new_report = Reporting(task_report=instance, examiner=instance.examiner,
-                                       student_uuid=instance.student_uuid)
+                                       student_uuid=instance.student_uuid, ers_time_start=instance.visible_date_start.date(),
+                                       first_rss_time_start=instance.visible_date_start.date())
                 new_report.save()
     except Exception as _ex:
         print(_ex)
