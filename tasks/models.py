@@ -145,9 +145,9 @@ def rename(file_name, path_name, instance, pfx):
             if file_name != filename:
                 print(filename, file_name, dt)
                 instance.save()
-                task_record = Task.objects.get(pk=instance.task_report.pk)
+                task_record = Task.objects.filter(pk=instance.task_report.pk)
                 task_record.visible_date_end = datetime.datetime.now(tz=timezone.utc)
-                task_record.save()
+                task_record.update()
 
     except Exception as _ex:
         print(_ex)
@@ -155,63 +155,63 @@ def rename(file_name, path_name, instance, pfx):
 
 @receiver(post_save, sender=Reporting)
 def change_filename(sender, instance, **kwargs):
-    try:
-        if instance.first_reiter and not instance.first_reiter_email_send:
-            TO = instance.first_reiter.email
-            TO_COPY = config('TO_COPY')
-            SUBJECT = 'Тестирование Tellcap'
-            try:
-                current_context = {
-                    'last_name': instance.first_reiter.last_name,
-                    'first_name': instance.first_reiter.first_name,
-                    'block_type': 'рейтером',
-                    'time_start': instance.first_rss_time_start,
-                    'student_uuid': instance.student_uuid,
-                    'time_end': instance.first_rss_time_end,
-                    'obj_link': f'https://corp.tellcap.ru/tests/reporting/{instance.pk}/',
-                }
-                print(f'https://corp.tellcap.ru/tests/reporting/{instance.pk}/')
-                text_content = render_to_string('tasks/email_template.html', current_context)
-                html_content = render_to_string('tasks/email_template.html', current_context)
-                msg = EmailMultiAlternatives(SUBJECT, text_content, EMAIL_HOST_USER, [TO, TO_COPY, ])
-                msg.attach_alternative(html_content, "text/html")
-                res = msg.send()
-                if res == 1:
-                    task_obj = Reporting.objects.get(pk=instance.pk)
-                    task_obj.first_reiter_email_send = True
-                    task_obj.save()
-            except Exception as e:
-                print("Failed to send the mail..", e)
+    # try:
+    if instance.first_reiter and not instance.first_reiter_email_send:
+        TO = instance.first_reiter.email
+        TO_COPY = config('TO_COPY')
+        SUBJECT = 'Тестирование Tellcap'
+        try:
+            current_context = {
+                'last_name': instance.first_reiter.last_name,
+                'first_name': instance.first_reiter.first_name,
+                'block_type': 'рейтером',
+                'time_start': instance.first_rss_time_start,
+                'student_uuid': instance.student_uuid,
+                'time_end': instance.first_rss_time_end,
+                'obj_link': f'https://corp.tellcap.ru/tests/reporting/{instance.pk}/',
+            }
+            print(f'https://corp.tellcap.ru/tests/reporting/{instance.pk}/')
+            text_content = render_to_string('tasks/email_template.html', current_context)
+            html_content = render_to_string('tasks/email_template.html', current_context)
+            msg = EmailMultiAlternatives(SUBJECT, text_content, EMAIL_HOST_USER, [TO, TO_COPY, ])
+            msg.attach_alternative(html_content, "text/html")
+            res = msg.send()
+            if res == 1:
+                task_obj = Reporting.objects.get(pk=instance.pk)
+                task_obj.first_reiter_email_send = True
+                task_obj.save()
+        except Exception as e:
+            print("Failed to send the mail..", e)
 
-        if instance.second_reiter and not instance.second_reiter_email_send:
-            TO = instance.second_reiter.email
-            TO_COPY = config('TO_COPY')
-            SUBJECT = 'Тестирование Tellcap'
-            try:
-                current_context = {
-                    'last_name': instance.second_reiter.last_name,
-                    'first_name': instance.second_reiter.first_name,
-                    'block_type': 'рейтером',
-                    'time_start': instance.second_rss_time_start,
-                    'student_uuid': instance.student_uuid,
-                    'time_end': instance.second_rss_time_end,
-                    'obj_link': f'https://corp.tellcap.ru/tests/reporting/{instance.pk}/',
-                }
-                print(f'https://corp.tellcap.ru/tests/reporting/{instance.pk}/')
-                text_content = render_to_string('tasks/email_template.html', current_context)
-                html_content = render_to_string('tasks/email_template.html', current_context)
-                msg = EmailMultiAlternatives(SUBJECT, text_content, EMAIL_HOST_USER, [TO, TO_COPY, ])
-                msg.attach_alternative(html_content, "text/html")
-                res = msg.send()
-                if res == 1:
-                    task_obj = Reporting.objects.get(pk=instance.pk)
-                    task_obj.second_reiter_email_send = True
-                    task_obj.save()
-            except Exception as e:
-                print("Failed to send the mail..", e)
+    if instance.second_reiter and not instance.second_reiter_email_send:
+        TO = instance.second_reiter.email
+        TO_COPY = config('TO_COPY')
+        SUBJECT = 'Тестирование Tellcap'
+        try:
+            current_context = {
+                'last_name': instance.second_reiter.last_name,
+                'first_name': instance.second_reiter.first_name,
+                'block_type': 'рейтером',
+                'time_start': instance.second_rss_time_start,
+                'student_uuid': instance.student_uuid,
+                'time_end': instance.second_rss_time_end,
+                'obj_link': f'https://corp.tellcap.ru/tests/reporting/{instance.pk}/',
+            }
+            print(f'https://corp.tellcap.ru/tests/reporting/{instance.pk}/')
+            text_content = render_to_string('tasks/email_template.html', current_context)
+            html_content = render_to_string('tasks/email_template.html', current_context)
+            msg = EmailMultiAlternatives(SUBJECT, text_content, EMAIL_HOST_USER, [TO, TO_COPY, ])
+            msg.attach_alternative(html_content, "text/html")
+            res = msg.send()
+            if res == 1:
+                task_obj = Reporting.objects.get(pk=instance.pk)
+                task_obj.second_reiter_email_send = True
+                task_obj.save()
+        except Exception as e:
+            print("Failed to send the mail..", e)
 
-    except Exception as _ex:
-        print(_ex)
+    # except Exception as _ex:
+    #     print(_ex)
 
     try:
         # Получаем имя сохраненного файла
