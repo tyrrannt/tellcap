@@ -44,9 +44,9 @@ def main(request, pk=None):
         tasks2 = Task.objects.filter(Q(examiner__username='admin'))
         tests = tasks1 | tasks2
     content = {'title': title, 'category': categoryes, 'test': tests}
-    paginator = Paginator(tests.order_by('id'), 6)
+    paginator = Paginator(tests.order_by('id'), 9)
     if request.user.is_staff:
-        paginator = Paginator(tests.order_by('name'), 6)
+        paginator = Paginator(tests.order_by('name'), 9)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     content = {'title': title, 'category': categoryes, 'page_obj': page_obj,
@@ -64,7 +64,7 @@ def category(request, pk=None):
     except Exception as ex:
         raise Http404
     tests = Test.objects.filter(category=categoryes.get(pk=pk))
-    paginator = Paginator(tests.order_by('name'), 6)  # Show 25 contacts per page.
+    paginator = Paginator(tests.order_by('name'), 9)  # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     content = {'title': title, 'category': categoryes, 'page_obj': page_obj, }
@@ -188,7 +188,7 @@ class CategoryDelete(LoginRequiredMixin, DeleteView):
 
 class TestList(LoginRequiredMixin, ListView):
     model = Test
-    paginate_by = 10
+    paginate_by = 15
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -249,7 +249,7 @@ class TestDelete(LoginRequiredMixin, DeleteView):
 
 class TaskReportsList(LoginRequiredMixin, ListView):
     model = Reporting
-    paginate_by = 10
+    paginate_by = 15
 
     def get_queryset(self):
         examiner_list = CustomUser.objects.filter(organisation=self.request.user.organisation)

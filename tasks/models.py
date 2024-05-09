@@ -272,3 +272,25 @@ class FileUpload(models.Model):
         except FileNotFoundError:
             logger.error(f'Ошибка удаления файла {self.file_field.name}')
         return super().delete()
+
+
+def exam_directory_path(instance, filename):
+    return f"exam/{filename}"
+
+class ExamRecord(models.Model):
+    class Meta:
+        verbose_name_plural = 'Записи экзаменов'
+        verbose_name = 'Запись экзамена'
+
+    audio = models.FileField(verbose_name='MP3 файл', upload_to=exam_directory_path)
+
+    def get_absolute_url(self):
+        return reverse('tasks:exam_list')
+
+    def delete(self, using=None, keep_parents=False):
+        path = pathlib.Path.joinpath(BASE_DIR, 'media', self.file_field.name)
+        try:
+            os.remove(path)
+        except FileNotFoundError:
+            logger.error(f'Ошибка удаления файла {self.file_field.name}')
+        return super().delete()

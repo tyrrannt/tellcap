@@ -79,6 +79,7 @@
                                             {% if user.is_superuser %}
                                                 <li><a href="{% url 'tasks:purpose_list' %}">Задачи</a></li>
                                                 <li><a href="{% url 'tasks:file_list' %}">Загрузить mp3</a></li>
+                                                <li><a href="{% url 'tasks:audio_list' %}">Запись mp3</a></li>
                                                 <li><a href="{% url 'admin:index' %}">Админ панель</a></li>
                                             {% endif %}
                                             <li><a href="{% url 'auth:logout' %}">Выход</a></li>

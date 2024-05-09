@@ -12,4 +12,6 @@ urlpatterns = [
     path('upload/add/', tasks_views.FileUploadAdd.as_view(), name='file_add'),
     path('upload/delete/<int:pk>/', tasks_views.FileUploadDelete.as_view(), name='file_delete'),
     path('upload/<int:pk>/', tasks_views.FileUploadUpdate.as_view(), name='file_update'),
+    path('audio/', tasks_views.get_audio, name='audio_list'),
+    path('audio/save/', tasks_views.audio_record, name='audio_save'),
     ]

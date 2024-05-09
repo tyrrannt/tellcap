@@ -1,18 +1,22 @@
+import base64
 import datetime
 import os
 import pathlib
 
 from django import forms
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic.detail import BaseDetailView
 from loguru import logger
 
 from authapp.models import CustomUser
 from tasks.forms import PurposeAddForm, PurposeUpdateForm, FileUploadAddForm, FileUploadUpdateForm
-from tasks.models import Task, FileUpload
-from tellcap.settings import BASE_DIR
+from tasks.models import Task, FileUpload, ExamRecord, Reporting
+from tellcap.settings import BASE_DIR, MEDIA_ROOT
 from tests.views import get_category
 
 logger.add("debug.json", format="{time} {level} {message}", level="DEBUG", rotation="10 MB", compression="zip",
@@ -25,7 +29,7 @@ class PurposeList(LoginRequiredMixin, ListView):
     Список задач
     """
     model = Task
-    paginate_by = 10
+    paginate_by = 15
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -120,7 +124,7 @@ class PurposeUpdate(LoginRequiredMixin, UpdateView):
 
 class FileUploadList(LoginRequiredMixin, ListView):
     model = FileUpload
-    paginate_by = 10
+    paginate_by = 15
 
     def get_queryset(self):
         qs = super().get_queryset().order_by('pk')
@@ -164,3 +168,45 @@ class FileUploadAdd(LoginRequiredMixin, CreateView):
 class FileUploadDelete(LoginRequiredMixin, DeleteView):
     model = FileUpload
     success_url = reverse_lazy('tasks:file_list')
+
+
+class AudioRecord(LoginRequiredMixin, BaseDetailView):
+    model = FileUpload
+    template_name = 'tasks/audio_record.html'
+
+
+@login_required
+def get_audio(request):
+    objects = Task.objects.filter(examiner__pk=request.user.pk)
+    return render(request, 'tasks/audio_record.html', context={'obj': objects})
+
+
+@login_required
+def audio_record(request):
+    if request.method == 'POST':
+        bs64 = request.POST.get('base64', None)
+        us64 = request.POST.get('formSelect', None)
+        print(Reporting.objects.get(task_report=us64))
+        decoded_img_data = base64.b64decode(bs64)
+        import uuid
+
+        filename_webm = f'{uuid.uuid4()}.webm'
+        filename_mp3 = f'{uuid.uuid4()}.mp3'
+        filepath = pathlib.Path.joinpath(BASE_DIR, MEDIA_ROOT, f'{request.user.pk}')
+        with open(pathlib.Path.joinpath(filepath, filename_webm), 'wb') as img_file:
+            img_file.write(decoded_img_data)
+        import subprocess
+
+        def convert_webm_to_mp3(input_file, output_file):
+            subprocess.call(['ffmpeg', '-i', input_file, output_file])
+
+        convert_webm_to_mp3(pathlib.Path.joinpath(filepath, filename_webm),
+                            pathlib.Path.joinpath(filepath, filename_mp3))
+        try:
+            os.remove(pathlib.Path.joinpath(filepath, filename_webm))
+        except FileNotFoundError:
+            logger.error(f'Ошибка удаления файла {filename_webm}')
+        exam_record = ExamRecord
+        exam_record.objects.create(audio=str(pathlib.Path.joinpath(filepath, filename_mp3)))
+    url_match = reverse_lazy("tasks:audio_list")
+    return redirect(url_match)

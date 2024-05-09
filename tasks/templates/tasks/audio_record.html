@@ -1,0 +1,347 @@
+{% extends 'tests/base.html' %}
+{% load static %}
+
+{% block title %}<title>{{ title }}</title>{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}"/>
+    <!-- Blog Section Start -->
+    <div class="section section-padding">
+        <div class="container">
+            <div>
+                {% if form.errors %}
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ field.label }}</strong>: {{ error|escape }}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ field.label }}</strong>: {{ error|escape }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="row">
+                <div class="form-row">
+                    <div class="form-group col mb-3">
+                        <div class="row">
+
+                            <section class="main-controls">
+                                <div class="col-12 mx-auto btn-group d-grid gap-2 mt-2">
+                                    <label for="id_purpose"></label>
+                                    <select class="form-select" id="id_purpose" name="purpose">
+                                        <option value="0" disabled selected>Выберите задачу</option>
+                                        {% for item in obj %}
+                                        <option value="{{ item.pk }}">{{ item }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-12 mx-auto btn-group d-grid gap-2 mt-2">
+                                    <canvas class="visualizer" height="60px"></canvas>
+                                </div>
+                                <div class="col-12 mx-auto btn-group d-grid gap-2 mt-2" id="buttons">
+                                    <button class="record btn-primary btn" type="button" style="background: #0d95e8">Record</button>
+                                    <button class="stop btn-secondary btn" type="button">Stop</button>
+                                </div>
+                            </section>
+
+                            <section class="sound-clips mt-2 col-12 mx-auto btn-group d-grid gap-2">
+
+
+                            </section>
+                        </div>
+                    </div>
+                </div>
+                <div class="row action-buttons">
+
+                    <div class="col-12 col-md-auto px-md-0 mt-3 mt-md-0">
+                        <a href="{% url 'tasks:purpose_list' %}"
+                           class="cancel-button btn btn-light btn-px-4 py-3 border font-weight-semibold text-color-dark text-3">Закрыть</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Blog Section End -->
+
+    <script src="{% static 'assets/js/app.js' %}"></script>
+{% endblock %}
+
+
+{#    <script src="{% static 'assets/js/script.js' %}"></script>#}
+{#    <script>#}
+{##}
+{#        let recorder = null#}
+{##}
+{#        function sendVoiceNote(base64) {#}
+{#            // create an instance for AJAX#}
+{#            var ajax = new XMLHttpRequest()#}
+{##}
+{#            function getCookie(name) {#}
+{#                let cookieValue = null;#}
+{#                if (document.cookie && document.cookie !== '') {#}
+{#                    const cookies = document.cookie.split(';');#}
+{#                    for (let i = 0; i < cookies.length; i++) {#}
+{#                        const cookie = cookies[i].trim();#}
+{#                        if (cookie.substring(0, name.length + 1) === (name + '=')) {#}
+{#                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));#}
+{#                            break;#}
+{#                        }#}
+{#                    }#}
+{#                }#}
+{#                return cookieValue;#}
+{#            }#}
+{##}
+{#            // set request method as POST, set URL and set asynchronous to true#}
+{#            // ajax.open("POST", "http://localhost:3000/sendVoiceNote", true)#}
+{#            ajax.open("POST", "http://localhost:8000/tasks/audio/save/", true)#}
+{##}
+{#            // whenever the status of request is changed#}
+{#            // ajax.onreadystatechange = async function() {#}
+{#            //     if (this.readyState == 4) {#}
+{#            //         if (this.status == 200) {#}
+{#            //             console.log(this.responseText)#}
+{#            //         }#}
+{##}
+{#            //         if (this.status == 500) {#}
+{#            //             console.log(this.responseText)#}
+{#            //         }#}
+{#            //     }#}
+{#            // }#}
+{##}
+{#            // send base64 string to server#}
+{#            const formData = new FormData()#}
+{#            formData.append("base64", base64)#}
+{#            ajax.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));#}
+{#            ajax.send(formData)#}
+{#            const elements = document.getElementsByClassName('logo');#}
+{#            while (elements.length > 0) {#}
+{#                elements[0].parentNode.removeChild(elements[0]);#}
+{#            }#}
+{##}
+{#        }#}
+{##}
+{#        function doRecordAudio() {#}
+{#            return new Promise(function (resolve) {#}
+{#                // get user audio media#}
+{#                navigator.mediaDevices.getUserMedia({#}
+{#                    audio: true#}
+{#                })#}
+{#                    .then(function (stream) {#}
+{#                        // create media recorder object#}
+{#                        const mediaRecorder = new MediaRecorder(stream)#}
+{##}
+{#                        // save audio chunks in an array#}
+{#                        const audioChunks = []#}
+{#                        mediaRecorder.addEventListener("dataavailable", function (event) {#}
+{#                            audioChunks.push(event.data)#}
+{#                        })#}
+{##}
+{#                        // create a start function#}
+{#                        const start = function () {#}
+{##}
+{#                            // when recording starts, set the icon to stop#}
+{#                            document.getElementById("icon-record-audio").className = "fa fa-stop-circle"#}
+{##}
+{#                            // on icon clicked#}
+{#                            document.getElementById("icon-record-audio").onclick = async function () {#}
+{#                                // stop the recorder#}
+{#                                if (recorder != null) {#}
+{#                                    const audio = await recorder.stop()#}
+{##}
+{#                                    // play the audio#}
+{#                                    audio.play()#}
+{##}
+{#                                    // get audio stream#}
+{#                                    const reader = new FileReader()#}
+{#                                    reader.readAsDataURL(audio.audioBlob)#}
+{#                                    reader.onloadend = function () {#}
+{#                                        // get base64#}
+{#                                        let base64 = reader.result#}
+{##}
+{#                                        // get only base64 data#}
+{#                                        base64 = base64.split(',')[1]#}
+{##}
+{#                                        // send base64 to server to save#}
+{#                                        sendVoiceNote(base64)#}
+{#                                    }#}
+{#                                }#}
+{#                            }#}
+{##}
+{#                            // start media recorder#}
+{#                            mediaRecorder.start()#}
+{#                        }#}
+{##}
+{#                        // create a stop function#}
+{#                        const stop = function () {#}
+{#                            return new Promise(function (resolve) {#}
+{##}
+{#                                // on recording stop listener#}
+{#                                mediaRecorder.addEventListener("stop", function () {#}
+{##}
+{#                                    // change the icon back to microphone#}
+{#                                    document.getElementById("icon-record-audio").className = "fa fa-microphone"#}
+{##}
+{#                                    // reset the onclick listener so when again clicked, it will record a new audio#}
+{#                                    document.getElementById("icon-record-audio").onclick = async function () {#}
+{#                                        recordAudio()#}
+{#                                    }#}
+{##}
+{#                                    // convert the audio chunks array into blob#}
+{#                                    const audioBlob = new Blob(audioChunks)#}
+{##}
+{#                                    // create URL object from URL#}
+{#                                    const audioUrl = URL.createObjectURL(audioBlob)#}
+{##}
+{#                                    // create an audio object to play#}
+{#                                    const audio = new Audio(audioUrl)#}
+{#                                    const play = function () {#}
+{#                                        audio.play()#}
+{#                                    }#}
+{##}
+{#                                    // send the values back to the promise#}
+{#                                    resolve({#}
+{#                                        audioBlob,#}
+{#                                        play#}
+{#                                    })#}
+{#                                })#}
+{##}
+{#                                // stop the media recorder#}
+{#                                mediaRecorder.stop()#}
+{#                            })#}
+{#                        }#}
+{##}
+{#                        // send the values back to promise#}
+{#                        resolve({#}
+{#                            start,#}
+{#                            stop#}
+{#                        })#}
+{#                    })#}
+{#            })#}
+{#        }#}
+{##}
+{#        // function to record audio#}
+{#        async function recordAudio() {#}
+{#            // get permission to access microphone#}
+{#            navigator.permissions.query({name: 'microphone'})#}
+{#                .then(function (permissionObj) {#}
+{#                    console.log(permissionObj.state)#}
+{#                })#}
+{#                .catch(function (error) {#}
+{#                    console.log('Got error :', error);#}
+{#                })#}
+{##}
+{#            // get recorder object#}
+{#            recorder = await doRecordAudio()#}
+{##}
+{#            // start audio#}
+{#            recorder.start()#}
+{#        }#}
+{#    </script>#}
+
+
+
+
+
+
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <meta name="viewport" content="width=device-width, initial-scale=1.0">#}
+{#    <title>Audio Recorder</title>#}
+{#</head>#}
+{#<body>#}
+{#<button id="startRecording">Start Recording</button>#}
+{#<button id="stopRecording" disabled>Stop Recording</button>#}
+{#<audio controls></audio>#}
+
+
+{##}
+{#<script>#}
+{#    // Accessing user's microphone#}
+{#    navigator.mediaDevices.getUserMedia({audio: true})#}
+{#        .then(function (stream) {#}
+{#            function getCookie(name) {#}
+{#                let cookieValue = null;#}
+{#                if (document.cookie && document.cookie !== '') {#}
+{#                    const cookies = document.cookie.split(';');#}
+{#                    for (let i = 0; i < cookies.length; i++) {#}
+{#                        const cookie = cookies[i].trim();#}
+{#                        if (cookie.substring(0, name.length + 1) === (name + '=')) {#}
+{#                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));#}
+{#                            break;#}
+{#                        }#}
+{#                    }#}
+{#                }#}
+{#                return cookieValue;#}
+{#            }#}
+{#            const audioContext = new AudioContext();#}
+{#            const mediaStreamSource = audioContext.createMediaStreamSource(stream);#}
+{##}
+{#            const recorder = new MediaRecorder(stream);#}
+{#            const chunks = [];#}
+{##}
+{#            recorder.ondataavailable = function (event) {#}
+{#                chunks.push(event.data);#}
+{#            };#}
+{##}
+{#            recorder.onstop = function (event) {#}
+{#                const blob = new Blob(chunks, {type: 'audio/ogg; codecs=opus'});#}
+{#                const audioURL = window.URL.createObjectURL(blob);#}
+{#                const audioElement = document.querySelector('audio');#}
+{#                audioElement.src = audioURL;#}
+{#                // get audio stream#}
+{#                const audio = new Audio(audioURL)#}
+{#                const reader = new FileReader()#}
+{#                reader.readAsDataURL(blob)#}
+{#                reader.onloadend = function () {#}
+{#                    // get base64#}
+{#                    let base64 = reader.result#}
+{##}
+{#                    // get only base64 data#}
+{#                    base64 = base64.split(',')[1]#}
+{##}
+{#                    // send base64 to server to save#}
+{#                    // send base64 to server to save#}
+{#                    sendVoiceNote(base64)#}
+{##}
+{#                }#}
+{#            };#}
+{##}
+{#            function sendVoiceNote(base64) {#}
+{#                // create an instance for AJAX#}
+{#                var ajax = new XMLHttpRequest()#}
+{##}
+{#                // set request method as POST, set URL and set asynchronous to true#}
+{#                ajax.open("POST", "http://localhost:8000/tasks/audio/save/", true)#}
+{##}
+{#                // send base64 string to server#}
+{#                const formData = new FormData()#}
+{#                formData.append("base64", base64)#}
+{#                ajax.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));#}
+{#                ajax.send(formData)#}
+{#            }#}
+{##}
+{#            document.getElementById('startRecording').addEventListener('click', function () {#}
+{#                recorder.start();#}
+{#                this.disabled = true;#}
+{#                document.getElementById('stopRecording').disabled = false;#}
+{#            });#}
+{##}
+{#            document.getElementById('stopRecording').addEventListener('click', function () {#}
+{#                recorder.stop();#}
+{#                this.disabled = true;#}
+{#                document.getElementById('startRecording').disabled = false;#}
+{#            });#}
+{#        })#}
+{#        .catch(function (err) {#}
+{#            console.error('Error accessing microphone:', err);#}
+{#        });#}
+{#</script>#}
+</body>
+</html>
