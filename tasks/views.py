@@ -186,13 +186,15 @@ def audio_record(request):
     if request.method == 'POST':
         bs64 = request.POST.get('base64', None)
         us64 = request.POST.get('formSelect', None)
-        print(Reporting.objects.get(task_report=us64))
+        # print(Reporting.objects.get(task_report=us64))
         decoded_img_data = base64.b64decode(bs64)
         import uuid
 
         filename_webm = f'{uuid.uuid4()}.webm'
         filename_mp3 = f'{uuid.uuid4()}.mp3'
         filepath = pathlib.Path.joinpath(BASE_DIR, MEDIA_ROOT, f'{request.user.pk}')
+        if not pathlib.Path(filepath).exists():
+            pathlib.Path(filepath).mkdir(parents=True, exist_ok=True)
         with open(pathlib.Path.joinpath(filepath, filename_webm), 'wb') as img_file:
             img_file.write(decoded_img_data)
         import subprocess

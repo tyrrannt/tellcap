@@ -260,6 +260,10 @@ def change_filename(sender, instance, **kwargs):
 
 
 class FileUpload(models.Model):
+    class Meta:
+        verbose_name_plural = 'MP3 файлы'
+        verbose_name = 'MP3 файл'
+
     file_field = models.FileField(verbose_name='MP3 файл', upload_to='')
 
     def get_absolute_url(self):
