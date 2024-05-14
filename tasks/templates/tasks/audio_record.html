@@ -28,41 +28,43 @@
                 <div class="form-row">
                     <div class="form-group col mb-3">
                         <div class="row">
+                            <section class="main-controls1">
 
-                            <section class="main-controls">
                                 <div class="col-12 mx-auto btn-group d-grid gap-2 mt-2">
                                     <label for="id_purpose"></label>
                                     <select class="form-select" id="id_purpose" name="purpose">
                                         <option value="0" disabled selected>Выберите задачу</option>
                                         {% for item in obj %}
-                                        <option value="{{ item.pk }}">{{ item }}</option>
+                                            <option value="{{ item.pk }}">{{ item }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
-                                <div class="col-12 mx-auto btn-group d-grid gap-2 mt-2">
-                                    <canvas class="visualizer" height="60px"></canvas>
+
+                                <div class="col-12 mx-auto btn-group d-grid gap-2 mt-2 main-controls">
+                                    <canvas class="visualizer" height="80"></canvas>
                                 </div>
+
                                 <div class="col-12 mx-auto btn-group d-grid gap-2 mt-2" id="buttons">
-                                    <button class="record btn-primary btn" type="button" style="background: #0d95e8">Record</button>
+                                    <button class="record btn-primary btn" type="button" style="background: #0d95e8">
+                                        Record
+                                    </button>
                                     <button class="stop btn-secondary btn" type="button">Stop</button>
                                 </div>
                             </section>
 
                             <section class="sound-clips mt-2 col-12 mx-auto btn-group d-grid gap-2">
-
-
                             </section>
+
+                            <div class="row action-buttons">
+                                <div class="col-12 col-md-auto px-md-0 mt-3 mt-md-0">
+                                    <a href="{% url 'tasks:purpose_list' %}"
+                                       class="cancel-button btn btn-light btn-px-4 py-3 border font-weight-semibold text-color-dark text-3">Закрыть</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="row action-buttons">
 
-                    <div class="col-12 col-md-auto px-md-0 mt-3 mt-md-0">
-                        <a href="{% url 'tasks:purpose_list' %}"
-                           class="cancel-button btn btn-light btn-px-4 py-3 border font-weight-semibold text-color-dark text-3">Закрыть</a>
-                    </div>
-
-                </div>
             </div>
         </div>
     </div>
@@ -242,10 +244,6 @@
 {#            recorder.start()#}
 {#        }#}
 {#    </script>#}
-
-
-
-
 
 
 {#<!DOCTYPE html>#}
